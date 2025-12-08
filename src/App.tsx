@@ -32,7 +32,17 @@ function useIsMobile(breakpoint: number = 820) {
 type Step = "signup" | "verify" | "download";
 
 function App() {
-    const [step, setStep] = useState<Step>("signup");
+    const [step, setStep] = useState<Step>(() => {
+        if (typeof window === "undefined") return "signup";
+        return /\/download\/?$/i.test(window.location.pathname) ? "download" : "signup";
+    });
+
+    const basePath = useMemo(() => {
+        if (typeof window === "undefined") return "/";
+        const withoutDownload = window.location.pathname.replace(/\/download\/?$/i, "");
+        if (withoutDownload === "" || withoutDownload === "/") return "/";
+        return withoutDownload.replace(/\/+$/, "");
+    }, []);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -125,6 +135,17 @@ function App() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const path =
+            step === "download"
+                ? `${basePath === "/" ? "" : basePath}/download`
+                : basePath;
+        if (window.location.pathname !== path) {
+            window.history.replaceState(null, "", path || "/");
+        }
+    }, [basePath, step]);
 
     // Styles
     const styles: { [k: string]: React.CSSProperties } = useMemo(
