@@ -342,7 +342,14 @@ function App() {
 
                     {step === "download" && (
                         <div style={styles.subheading}>
-                            Your email is verified. Download the HODL OTC mobile app to get started.
+                            If your account email has been verified please download the HODL APP to proceed, or{" "}
+                            <button
+                                type="button"
+                                style={styles.smallButtonLink}
+                                onClick={() => setStep("signup")}
+                            >
+                                click here to Register
+                            </button>
                         </div>
                     )}
 
@@ -468,9 +475,6 @@ function App() {
                                 </div>
                             </div>
 
-                            <div style={styles.helper}>
-                                You can close this window after installing the app.
-                            </div>
                         </>
                     )}
                 </div>
